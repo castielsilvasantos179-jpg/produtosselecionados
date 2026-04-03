@@ -110,7 +110,10 @@
                 btn.innerHTML = '<div class="ml-loading-spinner"></div>';
                 
                 try {
-                    const response = await fetch('../api/create-pix', {
+                    // Tenta encontrar a rota da API de forma flexível
+                    const apiPath = window.location.pathname.includes('/checkout/') ? '../api/create-pix' : '/api/create-pix';
+                    
+                    const response = await fetch(apiPath, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -120,14 +123,27 @@
                         })
                     });
                     
-                    const data = await response.json();
-                    if (data.pix_code) {
-                        state.pixCode = data.pix_code;
-                        state.transactionId = data.transaction_id;
+                    const text = await response.text();
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (e) {
+                        console.error('Resposta não é JSON:', text);
+                        throw new Error('O servidor retornou uma resposta inválida (não-JSON). Verifique se a rota /api/create-pix está configurada.');
+                    }
+
+                    // Normaliza a resposta (suporta data.pix_code ou data.data.pixCode)
+                    const pixCode = data.pix_code || (data.data && data.data.pixCode);
+                    const transactionId = data.transaction_id || (data.data && data.data.transactionId);
+
+                    if (pixCode) {
+                        state.pixCode = pixCode;
+                        state.transactionId = transactionId;
                         Checkout.saveState(state);
                         location.href = 'pix.html';
                     } else {
-                        alert('Erro ao gerar PIX. Tente novamente.');
+                        const errorMsg = data.error || data.message || 'Erro desconhecido ao gerar PIX.';
+                        alert('Erro ao gerar PIX: ' + errorMsg);
                         btn.disabled = false;
                         btn.textContent = 'Confirmar e Gerar PIX';
                     }
