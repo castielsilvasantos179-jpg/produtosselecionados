@@ -1,0 +1,1058 @@
+﻿﻿<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ofertas do Dia - Mercado Livre</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="../../css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+      :root {
+        --ml-yellow: #ffe600;
+        --ml-blue: #3483fa;
+        --ml-bg-gray: #ebebeb;
+        --ml-text-dark: #333;
+        --ml-green: #00a650;
+        --ml-blue-tag-bg: rgba(65, 137, 230, 0.15);
+        --ml-blue-tag-text: #3483fa;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto", sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      body {
+        background-color: var(--ml-bg-gray);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      /* HEADER */
+      .ml-header-container {
+        background-color: var(--ml-yellow);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: height 0.3s ease;
+        height: 98px;
+      }
+      .ml-header-container.compact-mode {
+        height: 56px;
+      }
+      .header-content-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .header-full {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .header-top-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 12px 0 12px;
+        height: 48px;
+      }
+      .header-logo-full {
+        height: 28px;
+        width: auto;
+      }
+      .icon-btn {
+        font-size: 20px;
+        color: #333;
+        cursor: pointer;
+      }
+      .search-row {
+        padding: 8px 12px 12px 12px;
+      }
+      .search-input-box {
+        background-color: #fff;
+        height: 38px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        padding: 0 12px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        width: 100%;
+      }
+      .search-text {
+        color: #999;
+        font-size: 15px;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .header-compact {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        gap: 12px;
+        opacity: 0;
+        transform: translateY(-10px);
+        pointer-events: none;
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+      }
+      .logo-circle {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .logo-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .search-compact {
+        flex: 1;
+        background-color: #fff;
+        height: 34px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+      .compact-icons {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        flex-shrink: 0;
+      }
+      .burger-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .notif-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background-color: #d50000;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ml-header-container.compact-mode .header-full {
+        opacity: 0;
+        transform: translateY(-20px);
+        pointer-events: none;
+      }
+      .ml-header-container.compact-mode .header-compact {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+      }
+
+      .location-bar {
+        background-color: #ffdf00;
+        padding: 10px 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: rgba(51, 51, 51, 0.9);
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        width: 100%;
+      }
+      .location-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 85vw;
+      }
+
+      /* AVISO DE LIMITE CPF */
+      .cpf-limit-alert {
+        background-color: #fff4cc;
+        color: #333;
+        padding: 12px 16px;
+        font-size: 13px;
+        border-bottom: 1px solid #e6dcb1;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 1px;
+      }
+      .cpf-icon {
+        color: #bfa128;
+        font-size: 16px;
+        margin-top: 2px;
+      }
+      .cpf-title {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 2px;
+        color: #615200;
+      }
+      .cpf-desc {
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      /* BANNER */
+      .promo-banner-container {
+        width: 100%;
+        display: block;
+        background-color: #fff;
+        text-decoration: none;
+      }
+      .promo-banner-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        object-fit: cover;
+      }
+
+      /* FILTROS */
+      .catalog-filters {
+        background-color: var(--ml-bg-gray);
+        padding: 15px;
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .catalog-filters::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-width: 100px;
+        height: 100px;
+        background: #fff;
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.2s;
+        position: relative;
+        flex-shrink: 0;
+      }
+      .filter-card i {
+        font-size: 28px;
+        color: var(--ml-blue);
+      }
+      .filter-text {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        line-height: 1.2;
+        max-width: 90px;
+      }
+      .filter-card.selected {
+        border-bottom: 4px solid var(--ml-blue);
+        color: var(--ml-blue);
+      }
+      .filter-card.selected .filter-text {
+        font-weight: 500;
+        color: #333;
+      }
+
+      /* GRID */
+      .products-count {
+        padding: 10px 12px;
+        font-size: 13px;
+        color: #666;
+        background: var(--ml-bg-gray);
+      }
+      .products-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1px;
+        background-color: #ebebeb;
+        padding: 0;
+      }
+
+      .cat-card {
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        text-decoration: none;
+        color: inherit;
+        padding-bottom: 15px;
+      }
+
+      .cat-img-container {
+        position: relative;
+        width: 100%;
+        padding-top: 100%;
+        background-color: #fff;
+        border-bottom: 1px solid #f5f5f5;
+      }
+      .cat-img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+        mix-blend-mode: multiply;
+      }
+      .cat-heart {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 28px;
+        height: 28px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ml-blue);
+        font-size: 14px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+      }
+
+      .cat-body {
+        padding: 12px 12px 0 12px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+      /* BADGE E TIMER */
+      .flash-deal-badge {
+        background: linear-gradient(90deg, #ffc400, #ff9100);
+        color: #222;
+        font-size: 9px;
+        font-weight: 800;
+        padding: 4px 6px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 4px;
+        margin-bottom: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .flash-deal-text {
+        font-style: italic;
+        text-transform: uppercase;
+        letter-spacing: -0.5px;
+        white-space: nowrap;
+      }
+
+      .timer-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        font-style: normal;
+        flex-shrink: 0;
+      }
+      .t-box {
+        background-color: #fff4d4;
+        color: #333;
+        padding: 2px 3px;
+        border-radius: 3px;
+        font-family: monospace;
+        font-size: 10px;
+        font-weight: 700;
+        min-width: 16px;
+        text-align: center;
+        line-height: 1;
+      }
+      .t-sep {
+        font-weight: 700;
+        font-size: 10px;
+        color: #333;
+        margin-top: -1px;
+      }
+
+      .cat-brand {
+        font-size: 10px;
+        color: #999;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+
+      /* Título */
+      .cat-title {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.3;
+        margin-bottom: 4px;
+        font-weight: 400;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 36px;
+      }
+
+      .cat-seller {
+        font-size: 10px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-bottom: 4px;
+      }
+      .cat-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+      .cat-stars {
+        color: var(--ml-blue);
+        font-size: 12px;
+        letter-spacing: 0;
+      }
+      .cat-rating-count {
+        font-size: 11px;
+        color: #ccc;
+      }
+
+      .cat-old-price {
+        font-size: 11px;
+        color: #999;
+        text-decoration: line-through;
+        margin-bottom: 2px;
+      }
+      .cat-price-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 4px;
+      }
+      .cat-price {
+        font-size: 22px;
+        font-weight: 400;
+        color: #333;
+      }
+      .cat-price sup {
+        font-size: 10px;
+        vertical-align: super;
+      }
+      .cat-discount {
+        font-size: 12px;
+        color: var(--ml-green);
+        font-weight: 500;
+        background: #e6f7ee;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+
+      .discount-highlight {
+        background-color: #fff159;
+        color: #333;
+        font-weight: 600;
+      }
+
+      .cat-installments {
+        font-size: 11px;
+        color: #333;
+        margin-bottom: 8px;
+      }
+      .cat-installments span {
+        color: var(--ml-green);
+        font-weight: 500;
+      }
+      .cat-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 8px;
+      }
+      .tag-pill {
+        background-color: var(--ml-blue-tag-bg);
+        color: var(--ml-blue-tag-text);
+        font-size: 10px;
+        font-weight: 600;
+        padding: 3px 5px;
+        border-radius: 3px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+      }
+      .cat-shipping {
+        font-size: 11px;
+        color: var(--ml-green);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .icon-full {
+        color: var(--ml-green);
+        font-style: italic;
+        font-weight: 900;
+        font-size: 10px;
+        display: flex;
+        align-items: center;
+      }
+      .icon-full i {
+        font-size: 9px;
+        margin-right: 1px;
+      }
+      .cat-colors {
+        font-size: 10px;
+        color: #999;
+        margin-top: auto;
+        padding-top: 8px;
+      }
+
+      .main-footer {
+        background-color: #fff;
+        padding: 20px 10px 40px 10px;
+        border-top: 1px solid #f5f5f5;
+        text-align: center;
+        margin-top: 20px;
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px 20px;
+        margin-bottom: 25px;
+      }
+      .footer-links a {
+        color: #333;
+        text-decoration: none;
+        font-size: 12px;
+      }
+      .footer-legal {
+        color: #999;
+        font-size: 11px;
+        line-height: 1.4;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="ml-header-container" id="dynamicHeader">
+      <div class="header-content-wrapper">
+        <div class="header-full">
+          <div class="header-top-row">
+            <div class="header-left">
+              <i class="fa-solid fa-bars icon-btn"></i>
+            </div>
+            <img src="images/logo.png" alt="Mercado Livre" class="header-logo-full">
+            <div class="header-right">
+              <div class="cart-container">
+                <i class="fa-solid fa-cart-shopping icon-btn"></i>
+              </div>
+            </div>
+          </div>
+          <div class="search-row">
+            <div class="search-input-box">
+              <i class="fa-solid fa-magnifying-glass" style="color: #ccc; margin-right: 10px"></i><span class="search-text">Buscar produtos, muito mais...</span>
+            </div>
+          </div>
+        </div>
+        <div class="header-compact">
+          <div class="logo-circle"><img src="images/logo.png" alt="ML"></div>
+          <div class="search-compact">
+            <i class="fa-solid fa-magnifying-glass" style="color: #ccc; margin-right: 8px; font-size: 14px"></i><span class="search-text" style="font-size: 14px">Estou buscando...</span>
+          </div>
+          <div class="compact-icons">
+            <div class="burger-container">
+              <i class="fa-solid fa-bars icon-btn"></i><span class="notif-badge">3</span>
+            </div>
+            <i class="fa-solid fa-cart-shopping icon-btn"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="location-bar" id="locationBar">
+      <i class="fa-solid fa-location-dot" style="font-size: 14px; opacity: 0.6"></i>
+      <span class="location-text" id="user-location-text">Detectando...</span>
+      <i class="fa-solid fa-chevron-right" style="font-size: 10px; margin-left: auto; opacity: 0.5"></i>
+    </div>
+
+    <div class="promo-banner-container">
+      <img src="images/banner1.webp" alt="Ofertas" class="promo-banner-img">
+    </div>
+
+    <div class="catalog-filters">
+      <div class="filter-card" onclick="toggleVisualFilter(this)">
+        <i class="fa-solid fa-tag"></i>
+        <span class="filter-text">Todas as ofertas</span>
+      </div>
+      <div class="filter-card selected" onclick="toggleVisualFilter(this)">
+        <i class="fa-solid fa-bolt"></i>
+        <span class="filter-text">Ofertas relâmpago</span>
+      </div>
+      <div class="filter-card" onclick="toggleVisualFilter(this)">
+        <i class="fa-solid fa-certificate"></i>
+        <span class="filter-text">Preços Imbatíveis</span>
+      </div>
+      <div class="filter-card" onclick="toggleVisualFilter(this)">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span class="filter-text">Outros produtos</span>
+      </div>
+    </div>
+
+    <div class="products-count">4 produtos encontrados</div>
+
+    <div class="cpf-limit-alert">
+      <i class="fa-solid fa-triangle-exclamation cpf-icon"></i>
+      <div>
+        <span class="cpf-title">Regra de Limite por CPF</span>
+        <p class="cpf-desc">Promoção liberada para apenas 1 CPF e 1 Produto.</p>
+      </div>
+    </div>
+
+    <div class="products-grid">
+      <a href="camera/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto1.png" alt="Osklen" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">20</span><span class="t-sep">:</span><span class="t-box s">00</span>
+            </div>
+          </div>
+          <div class="cat-brand">Câmera4k</div>
+          <div class="cat-title">
+            <b>[COMPRE 1 LEVE 2]</b> Câmera de segurança 1080P
+          </div>
+          <div class="cat-seller">
+            Por Camêras 4KHD
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.8</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span><span class="cat-rating-count">(265)</span>
+          </div>
+          <div class="cat-old-price">R$ 437,99</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 89<sup>99</sup></div>
+            <div class="cat-discount">calculando...</div>
+          </div>
+          <div class="cat-installments">12x R$ 8,99</div>
+          <div class="cat-tags">
+            <span class="tag-pill">ÚLTIMAS UNIDADES</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">Frete grátis</div>
+          <div class="cat-colors">*Disponível Apenas <b>8</b> Unidades</div>
+        </div>
+      </a>
+
+      <a href="ventilador/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto2.png" alt="Kappa" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">20</span><span class="t-sep">:</span><span class="t-box s">00</span>
+            </div>
+          </div>
+          <div class="cat-brand">MONDIAL</div>
+          <div class="cat-title">
+            <b>[COMPRE 1 LEVE 2]</b> Ventilador Mondial 40 Cm
+          </div>
+          <div class="cat-seller">
+            Por Mondial
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.7</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span><span class="cat-rating-count">(21990)</span>
+          </div>
+          <div class="cat-old-price">R$ 263,30</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 78<sup>99</sup></div>
+            <div class="cat-discount">calculando...</div>
+          </div>
+          <div class="cat-tags">
+            <span class="tag-pill">70% OFF</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">
+            Frete grátis
+            <span class="icon-full" style="margin-left: 4px"><i class="fa-solid fa-bolt"></i> FULL</span>
+          </div>
+          <div class="cat-colors">*Disponível Apenas <b>7</b> Unidades</div>
+        </div>
+      </a>
+
+      <a href="wap/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto3.png" alt="Nike Revolution" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">20</span><span class="t-sep">:</span><span class="t-box s">00</span>
+            </div>
+          </div>
+          <div class="cat-brand">WAP</div>
+          <div class="cat-title">
+            WAP Lavadora de Alta Pressão LÍDER 2200, 360L/h, com Jato em Leque e
+            Concentrado, 1800psi 1750W
+          </div>
+          <div class="cat-seller">
+            Por WAP Loja Oficial
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.6</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span><span class="cat-rating-count">(2540)</span>
+          </div>
+          <div class="cat-old-price">R$ 799,99</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 119<sup>99</sup></div>
+            <div class="cat-discount">calculando...</div>
+          </div>
+          <div class="cat-installments">12x R$ 11,99</div>
+          <div class="cat-tags">
+            <span class="tag-pill">85% OFF</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">Frete grátis</div>
+          <div class="cat-colors">*Disponível Apenas <b>4</b> Unidades</div>
+        </div>
+      </a>
+
+      <a href="poltrona/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto4.png" alt="Adidas Runfalcon" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">20</span><span class="t-sep">:</span><span class="t-box s">00</span>
+            </div>
+          </div>
+          <div class="cat-brand">LOVE MÓVEIS</div>
+          <div class="cat-title">
+            Poltrona Costela Com Puff Para Sala Original Linho Bege
+          </div>
+          <div class="cat-seller">
+            Por Love Móveis
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.9</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><span class="cat-rating-count">(1200)</span>
+          </div>
+          <div class="cat-old-price">R$ 799,99</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 149<sup>90</sup></div>
+            <div class="cat-discount">calculando...</div>
+          </div>
+          <div class="cat-installments">12x R$ 8,99</div>
+          <div class="cat-tags">
+            <span class="tag-pill">70% OFF</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">Frete grátis</div>
+          <div class="cat-colors">*Disponível em 6 cores</div>
+        </div>
+      </a>
+    </div>
+
+    <a href="ml/aros" class="promo-banner-container" style="display: block; margin-top: 2px">
+      <img src="images/bannermion.png" alt="Promoção Mion" class="promo-banner-img">
+    </a>
+
+    <div class="products-grid">
+      <a href="parafusadeira/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto5.png" alt="Osklen" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">19</span><span class="t-sep">:</span><span class="t-box s">15</span>
+            </div>
+          </div>
+          <div class="cat-brand">Borsch</div>
+          <div class="cat-title">
+            Furadeira E Parafusadeira Borsch De Impacto 1/2 Gsb 183 Li Com
+            Carregador E Bateria Bosch GSB 183LI
+          </div>
+          <div class="cat-seller">
+            Por Borsch
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.8</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span><span class="cat-rating-count">(265)</span>
+          </div>
+          <div class="cat-old-price">R$ 537,99</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 109<sup>90</sup></div>
+            <div class="cat-discount high-discount">81% OFF</div>
+          </div>
+          <div class="cat-installments">12x R$ 8,99</div>
+          <div class="cat-tags">
+            <span class="tag-pill">ÚLTIMAS UNIDADES</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">Frete grátis</div>
+          <div class="cat-colors">*Disponível Apenas <b>8</b> Unidades</div>
+        </div>
+      </a>
+
+      <a href="maquinasolda/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto6.png" alt="Kappa" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">19</span><span class="t-sep">:</span><span class="t-box s">15</span>
+            </div>
+          </div>
+          <div class="cat-brand">MIG</div>
+          <div class="cat-title">
+            Maquina Inversora Solda Mig 160a 3 Em 1 Tig Lift Acessórios
+          </div>
+          <div class="cat-seller">
+            Por MIG
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.7</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span><span class="cat-rating-count">(21990)</span>
+          </div>
+          <div class="cat-old-price">R$ 598,30</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 167<sup>99</sup></div>
+            <div class="cat-discount high-discount">70% OFF</div>
+          </div>
+          <div class="cat-tags">
+            <span class="tag-pill">70% OFF</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">
+            Frete grátis
+            <span class="icon-full" style="margin-left: 4px"><i class="fa-solid fa-bolt"></i> FULL</span>
+          </div>
+          <div class="cat-colors">*Disponível Apenas <b>7</b> Unidades</div>
+        </div>
+      </a>
+
+      <a href="panela/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto7.png" alt="Nike Revolution" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">19</span><span class="t-sep">:</span><span class="t-box s">15</span>
+            </div>
+          </div>
+          <div class="cat-brand">BRINOX</div>
+          <div class="cat-title">
+            Kit 8 Panelas Brinox - Peças Ceramic Life Smart Plus Vanilla
+            Concentrado, 1800psi 1750W
+          </div>
+          <div class="cat-seller">
+            Por BRINOX
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.6</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></span><span class="cat-rating-count">(2540)</span>
+          </div>
+          <div class="cat-old-price">R$ 799,99</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 119<sup>99</sup></div>
+            <div class="cat-discount high-discount">85% OFF</div>
+          </div>
+          <div class="cat-installments">12x R$ 11,99</div>
+          <div class="cat-tags">
+            <span class="tag-pill">85% OFF</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">Frete grátis</div>
+          <div class="cat-colors">*Disponível Apenas <b>4</b> Unidades</div>
+        </div>
+      </a>
+
+      <a href="climatizador/index.htm" class="cat-card">
+        <div class="cat-img-container">
+          <img src="images/produto8.png" alt="Adidas Runfalcon" class="cat-img">
+          <div class="cat-heart"><i class="fa-regular fa-heart"></i></div>
+        </div>
+        <div class="cat-body">
+          <div class="flash-deal-badge">
+            <span class="flash-deal-text">OFERTA RELÂMPAGO</span>
+            <div class="timer-wrapper">
+              <span class="t-box h">00</span><span class="t-sep">:</span><span class="t-box m">19</span><span class="t-sep">:</span><span class="t-box s">15</span>
+            </div>
+          </div>
+          <div class="cat-brand">Low Cost</div>
+          <div class="cat-title">
+            Aquecedor Climatizador Portatil 3 Em 1 Ventilador Controle Branco
+            Bivolt
+          </div>
+          <div class="cat-seller">
+            Por LowCost
+            <i class="fa-solid fa-circle-check" style="font-size: 10px; color: var(--ml-blue)"></i>
+          </div>
+          <div class="cat-rating-row">
+            <span style="font-size: 11px; color: #666">4.9</span><span class="cat-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span><span class="cat-rating-count">(1200)</span>
+          </div>
+          <div class="cat-old-price">R$ 799,99</div>
+          <div class="cat-price-row">
+            <div class="cat-price">R$ 119<sup>90</sup></div>
+            <div class="cat-discount high-discount">81% OFF</div>
+          </div>
+          <div class="cat-installments">12x R$ 18,99</div>
+          <div class="cat-tags">
+            <span class="tag-pill">70% OFF</span><span class="tag-pill">FRETE GRÁTIS</span>
+          </div>
+          <div class="cat-shipping">Frete grátis</div>
+          <div class="cat-colors">*Disponível Apenas 7 Unidades</div>
+        </div>
+      </a>
+    </div>
+
+    <footer class="main-footer">
+      <div class="footer-links">
+        <a href="#">Minha conta</a><a href="#">Compras</a><a href="#">Histórico</a><a href="#">Favoritos</a><a href="#">Categorias</a><a href="#">Ofertas do dia</a><a href="#">Vender</a><a href="#">Contato</a>
+      </div>
+      <div class="footer-legal">
+        <p>Termos e condições • Privacidade • Acessibilidade</p>
+        <p>Copyright © 1999-2024 Ebazar.com.br LTDA.</p>
+      </div>
+    </footer>
+
+    <script>
+      const headerContainer = document.getElementById("dynamicHeader");
+      window.addEventListener("scroll", () => {
+        if (window.scrollY > 10) headerContainer.classList.add("compact-mode");
+        else headerContainer.classList.remove("compact-mode");
+      });
+
+      async function updateLocation() {
+        const locationText = document.getElementById("user-location-text");
+        try {
+          const response = await fetch("https://get.geojs.io/v1/ip/geo.json");
+          const data = await response.json();
+          if (data.city)
+            locationText.textContent = `Enviar para ${data.city}, ${data.region_code || "BR"}`;
+          else locationText.textContent = "Enviar para Capital, SP";
+        } catch (e) {
+          locationText.textContent = "Enviar para Capital, SP";
+        }
+      }
+      updateLocation();
+
+      function startTimer() {
+        let totalSeconds = 20 * 60;
+        function update() {
+          totalSeconds--;
+          if (totalSeconds < 0) totalSeconds = 20 * 60;
+          const hours = Math.floor(totalSeconds / 3600);
+          const minutes = Math.floor((totalSeconds % 3600) / 60);
+          const seconds = totalSeconds % 60;
+          const h = hours.toString().padStart(2, "0");
+          const m = minutes.toString().padStart(2, "0");
+          const s = seconds.toString().padStart(2, "0");
+          document.querySelectorAll(".timer-wrapper").forEach((wrapper) => {
+            const hBox = wrapper.querySelector(".h");
+            if (hBox) {
+              hBox.textContent = h;
+              wrapper.querySelector(".m").textContent = m;
+              wrapper.querySelector(".s").textContent = s;
+            }
+          });
+        }
+        setInterval(update, 1000);
+      }
+      startTimer();
+
+      // CÁLCULO DE DESCONTO
+      function calculateDiscounts() {
+        document.querySelectorAll(".cat-card").forEach((card) => {
+          const oldPriceEl = card.querySelector(".cat-old-price");
+          const mainPriceEl = card.querySelector(".cat-price");
+          const discountEl = card.querySelector(".cat-discount");
+
+          if (oldPriceEl && mainPriceEl && discountEl) {
+            let oldPrice = parseFloat(
+              oldPriceEl.innerText.replace(/[^\d,]/g, "").replace(",", "."),
+            );
+            const mainText = mainPriceEl.childNodes[0].textContent.replace(
+              /[^\d]/g,
+              "",
+            );
+            const cents = mainPriceEl.querySelector("sup")
+              ? mainPriceEl.querySelector("sup").textContent
+              : "00";
+            let newPrice = parseFloat(mainText + "." + cents);
+
+            if (oldPrice > 0 && newPrice > 0) {
+              const percent = Math.round((1 - newPrice / oldPrice) * 100);
+              discountEl.textContent = `${percent}% OFF`;
+              if (percent >= 70) discountEl.classList.add("high-discount");
+              else discountEl.classList.remove("high-discount");
+            }
+          }
+        });
+      }
+      document.addEventListener("DOMContentLoaded", calculateDiscounts);
+
+      // FUNÇÃO APENAS VISUAL (NÃO FILTRA NADA)
+      function toggleVisualFilter(btnElement) {
+        document
+          .querySelectorAll(".filter-card")
+          .forEach((btn) => btn.classList.remove("selected"));
+        btnElement.classList.add("selected");
+        // NÃO ESCONDE PRODUTOS MAIS
+      }
+
+    </script>
+  <script defer="" src="../../beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"b99d8a5ec82c4b1cae95a2d435698304","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Identificação - Mercado Livre</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+    <div class="ml-header">
+        <img src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.18.9/mercadolibre/logo__large_plus.png" class="ml-header-logo" onclick="location.href='../index.htm'">
+        <a href="#" class="ml-header-contact">Contato</a>
+    </div>
+
+    <div class="ml-guarantee">
+        Esta compra possui garantia. O Mercado Pago garante a entrega do pedido ou <b>Reembolso total do valor pago.</b>
+    </div>
+
+    <div class="ml-container">
+        <div class="ml-main">
+            <div class="ml-card">
+                <div class="ml-card-title">
+                    Identificação <span class="ml-card-step">1 de 3</span>
+                </div>
+                <div id="ml-step-content-1">
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Preencha seus dados para envio do pedido.</p>
+                    <div class="ml-form-group">
+                        <label class="ml-label">Nome completo</label>
+                        <input type="text" id="ml-input-name" class="ml-input" placeholder="Digite seu nome completo">
+                    </div>
+                    <div class="ml-form-group">
+                        <label class="ml-label">E-mail</label>
+                        <input type="email" id="ml-input-email" class="ml-input" placeholder="Digite seu e-mail">
+                    </div>
+                    <div class="ml-form-group">
+                        <label class="ml-label">Celular/Whatsapp</label>
+                        <input type="tel" id="ml-input-phone" class="ml-input" placeholder="(00) 00000-0000">
+                    </div>
+                    <button id="ml-btn-to-step-2" class="ml-btn-primary">Ir Para Entrega</button>
+                </div>
+            </div>
+
+            <div class="ml-card" style="opacity: 0.5; pointer-events: none;">
+                <div class="ml-card-title">Entrega <span class="ml-card-step">2 de 3</span></div>
+                <div style="color:#999; font-size:14px;">Preencha seus dados para continuar</div>
+            </div>
+
+            <div class="ml-card" style="opacity: 0.5; pointer-events: none;">
+                <div class="ml-card-title">Pagamento <span class="ml-card-step">3 de 3</span></div>
+                <div style="color:#999; font-size:14px;">Preencha os dados de entrega para continuar</div>
+            </div>
+        </div>
+
+        <div class="ml-sidebar">
+            <div class="ml-card">
+                <div style="font-size:18px; font-weight:600; margin-bottom:20px;">Resumo da compra</div>
+                <div class="ml-summary-row">
+                    <span>Produtos</span>
+                    <span id="ml-sum-subtotal">R$ 0,00</span>
+                </div>
+                <div class="ml-summary-row">
+                    <span>Frete</span>
+                    <span style="color:#00a650; font-weight:600;">Grátis</span>
+                </div>
+                <div class="ml-summary-row ml-summary-total">
+                    <span>Você pagará</span>
+                    <span id="ml-sum-total">R$ 0,00</span>
+                </div>
+
+                <div class="ml-summary-product">
+                    <img src="" id="ml-sum-product-img" class="ml-summary-img">
+                    <div class="ml-summary-name" id="ml-sum-product-name">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ml-footer">
+        <p>MERCADO PAGO | Todos os direitos reservados</p>
+        <p>© 2026 MERCADO PAGO - CNPJ: 10.573.521/0001-91</p>
+    </div>
+
+    <script src="checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const state = Checkout.getState();
+            if (state.customer.name) document.getElementById('ml-input-name').value = state.customer.name;
+            if (state.customer.email) document.getElementById('ml-input-email').value = state.customer.email;
+            if (state.customer.phone) document.getElementById('ml-input-phone').value = state.customer.phone;
+
+            document.getElementById('ml-btn-to-step-2').onclick = () => {
+                const name = document.getElementById('ml-input-name').value.trim();
+                const email = document.getElementById('ml-input-email').value.trim();
+                const phone = document.getElementById('ml-input-phone').value.trim();
+                
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (name.length < 5) return alert('Informe seu nome completo');
+                if (!emailRegex.test(email)) return alert('Informe um e-mail válido');
+                if (phone.length < 14) return alert('Informe seu celular com DDD');
+                
+                Checkout.updateCustomer({ name, email, phone });
+                location.href = 'entrega.html';
+            };
+        });
+    </script>
+</body>
+</html>

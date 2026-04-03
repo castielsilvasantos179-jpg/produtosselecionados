@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrega - Mercado Livre</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+    <div class="ml-header">
+        <img src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.18.9/mercadolibre/logo__large_plus.png" class="ml-header-logo" onclick="location.href='../index.htm'">
+        <a href="#" class="ml-header-contact">Contato</a>
+    </div>
+
+    <div class="ml-guarantee">
+        Esta compra possui garantia. O Mercado Pago garante a entrega do pedido ou <b>Reembolso total do valor pago.</b>
+    </div>
+
+    <div class="ml-container">
+        <div class="ml-main">
+            <!-- STEP 1: IDENTIFICAÇÃO (SUMMARY) -->
+            <div class="ml-card">
+                <div class="ml-card-title">Identificação <span class="ml-card-step">1 de 3</span></div>
+                <div id="ml-step-summary-1"></div>
+            </div>
+
+            <!-- STEP 2: ENTREGA (FORM) -->
+            <div class="ml-card">
+                <div class="ml-card-title">
+                    Entrega <span class="ml-card-step">2 de 3</span>
+                </div>
+                <div id="ml-step-content-2">
+                    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Informe o endereço de entrega.</p>
+                    <div class="ml-row">
+                        <div class="ml-form-group">
+                            <label class="ml-label">CEP</label>
+                            <input type="tel" id="ml-input-zipcode" class="ml-input" placeholder="00000-000">
+                        </div>
+                        <div class="ml-form-group">
+                            <label class="ml-label">CPF</label>
+                            <input type="tel" id="ml-input-cpf" class="ml-input" placeholder="000.000.000-00">
+                        </div>
+                    </div>
+                    <div class="ml-form-group">
+                        <label class="ml-label">Endereço</label>
+                        <input type="text" id="ml-input-address" class="ml-input" placeholder="Rua, Avenida...">
+                    </div>
+                    <div class="ml-row">
+                        <div class="ml-form-group">
+                            <label class="ml-label">Número</label>
+                            <input type="text" id="ml-input-number" class="ml-input" placeholder="Nº">
+                        </div>
+                        <div class="ml-form-group">
+                            <label class="ml-label">Bairro</label>
+                            <input type="text" id="ml-input-neighborhood" class="ml-input" placeholder="Bairro">
+                        </div>
+                    </div>
+                    <div class="ml-row">
+                        <div class="ml-form-group">
+                            <label class="ml-label">Cidade</label>
+                            <input type="text" id="ml-input-city" class="ml-input" placeholder="Cidade">
+                        </div>
+                        <div class="ml-form-group">
+                            <label class="ml-label">Estado</label>
+                            <input type="text" id="ml-input-state" class="ml-input" placeholder="UF">
+                        </div>
+                    </div>
+                    <button id="ml-btn-to-step-3" class="ml-btn-primary">Ir Para Pagamento</button>
+                </div>
+            </div>
+
+            <!-- STEP 3: PAGAMENTO (PLACEHOLDER) -->
+            <div class="ml-card" style="opacity: 0.5; pointer-events: none;">
+                <div class="ml-card-title">Pagamento <span class="ml-card-step">3 de 3</span></div>
+                <div style="color:#999; font-size:14px;">Preencha os dados de entrega para continuar</div>
+            </div>
+        </div>
+
+        <div class="ml-sidebar">
+            <div class="ml-card">
+                <div style="font-size:18px; font-weight:600; margin-bottom:20px;">Resumo da compra</div>
+                <div class="ml-summary-row">
+                    <span>Produtos</span>
+                    <span id="ml-sum-subtotal">R$ 0,00</span>
+                </div>
+                <div class="ml-summary-row">
+                    <span>Frete</span>
+                    <span style="color:#00a650; font-weight:600;">Grátis</span>
+                </div>
+                <div class="ml-summary-row ml-summary-total">
+                    <span>Você pagará</span>
+                    <span id="ml-sum-total">R$ 0,00</span>
+                </div>
+
+                <div class="ml-summary-product">
+                    <img src="" id="ml-sum-product-img" class="ml-summary-img">
+                    <div class="ml-summary-name" id="ml-sum-product-name">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ml-footer">
+        <p>MERCADO PAGO | Todos os direitos reservados</p>
+        <p>© 2026 MERCADO PAGO - CNPJ: 10.573.521/0001-91</p>
+    </div>
+
+    <script src="checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Checkout.renderStepSummaries(2);
+            const state = Checkout.getState();
+            
+            if (state.customer.zipcode) document.getElementById('ml-input-zipcode').value = state.customer.zipcode;
+            if (state.customer.cpf) document.getElementById('ml-input-cpf').value = state.customer.cpf;
+            if (state.customer.address) document.getElementById('ml-input-address').value = state.customer.address;
+            if (state.customer.number) document.getElementById('ml-input-number').value = state.customer.number;
+            if (state.customer.neighborhood) document.getElementById('ml-input-neighborhood').value = state.customer.neighborhood;
+            if (state.customer.city) document.getElementById('ml-input-city').value = state.customer.city;
+            if (state.customer.state) document.getElementById('ml-input-state').value = state.customer.state;
+
+            document.getElementById('ml-btn-to-step-3').onclick = () => {
+                const zip = document.getElementById('ml-input-zipcode').value;
+                const cpf = document.getElementById('ml-input-cpf').value;
+                const addr = document.getElementById('ml-input-address').value;
+                const num = document.getElementById('ml-input-number').value;
+                const neigh = document.getElementById('ml-input-neighborhood').value;
+                const city = document.getElementById('ml-input-city').value;
+                const st = document.getElementById('ml-input-state').value;
+                
+                if (zip.length < 8) return alert('Informe um CEP válido');
+                if (!Checkout.validateCPF(cpf)) return alert('Informe um CPF válido');
+                if (addr.length < 3) return alert('Informe seu endereço');
+                if (num.length < 1) return alert('Informe o número');
+                
+                Checkout.updateCustomer({ 
+                    zipcode: zip, cpf, address: addr, number: num, 
+                    neighborhood: neigh, city, state: st 
+                });
+                location.href = 'pagamento.html';
+            };
+        });
+    </script>
+</body>
+</html>

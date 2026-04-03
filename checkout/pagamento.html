@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento - Mercado Livre</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+    <div class="ml-header">
+        <img src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.18.9/mercadolibre/logo__large_plus.png" class="ml-header-logo" onclick="location.href='../index.htm'">
+        <a href="#" class="ml-header-contact">Contato</a>
+    </div>
+
+    <div class="ml-guarantee">
+        Esta compra possui garantia. O Mercado Pago garante a entrega do pedido ou <b>Reembolso total do valor pago.</b>
+    </div>
+
+    <div class="ml-container">
+        <div class="ml-main">
+            <!-- STEP 1: IDENTIFICAÇÃO (SUMMARY) -->
+            <div class="ml-card">
+                <div class="ml-card-title">Identificação <span class="ml-card-step">1 de 3</span></div>
+                <div id="ml-step-summary-1"></div>
+            </div>
+
+            <!-- STEP 2: ENTREGA (SUMMARY) -->
+            <div class="ml-card">
+                <div class="ml-card-title">Entrega <span class="ml-card-step">2 de 3</span></div>
+                <div id="ml-step-summary-2"></div>
+            </div>
+
+            <!-- STEP 3: PAGAMENTO (FORM) -->
+            <div class="ml-card">
+                <div class="ml-card-title">
+                    Como você prefere pagar? <span class="ml-card-step">3 de 3</span>
+                </div>
+                <div id="ml-step-content-3">
+                    <div class="ml-pay-option active" id="ml-pay-pix">
+                        <div class="ml-pay-radio"></div>
+                        <svg class="ml-pay-icon" viewBox="0 0 24 24" fill="currentColor" style="width:24px; height:24px; color:#00a650;"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
+                        <div class="ml-pay-text">
+                            <b>Pix</b>
+                            <span>Aprovação imediata. O código expira em 30 minutos.</span>
+                        </div>
+                    </div>
+
+                    <div class="ml-pay-option" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="ml-pay-radio"></div>
+                        <div class="ml-pay-text">
+                            <b>Cartão de Crédito</b>
+                            <span>Indisponível no momento</span>
+                        </div>
+                    </div>
+
+                    <div class="ml-pay-option" style="opacity: 0.6; cursor: not-allowed;">
+                        <div class="ml-pay-radio"></div>
+                        <div class="ml-pay-text">
+                            <b>Boleto Bancário</b>
+                            <span>Indisponível no momento</span>
+                        </div>
+                    </div>
+
+                    <button id="ml-btn-generate-pix" class="ml-btn-primary" style="margin-top: 20px;">
+                        Confirmar e Gerar PIX
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ml-sidebar">
+            <div class="ml-card">
+                <div style="font-size:18px; font-weight:600; margin-bottom:20px;">Resumo da compra</div>
+                <div class="ml-summary-row">
+                    <span>Produtos</span>
+                    <span id="ml-sum-subtotal">R$ 0,00</span>
+                </div>
+                <div class="ml-summary-row">
+                    <span>Frete</span>
+                    <span style="color:#00a650; font-weight:600;">Grátis</span>
+                </div>
+                <div class="ml-summary-row ml-summary-total">
+                    <span>Você pagará</span>
+                    <span id="ml-sum-total">R$ 0,00</span>
+                </div>
+
+                <div class="ml-summary-product">
+                    <img src="" id="ml-sum-product-img" class="ml-summary-img">
+                    <div class="ml-summary-name" id="ml-sum-product-name">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ml-footer">
+        <p>MERCADO PAGO | Todos os direitos reservados</p>
+        <p>© 2026 MERCADO PAGO - CNPJ: 10.573.521/0001-91</p>
+    </div>
+
+    <script src="checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Checkout.renderStepSummaries(3);
+            
+            document.getElementById('ml-btn-generate-pix').onclick = async function() {
+                const btn = this;
+                const state = Checkout.getState();
+                
+                btn.disabled = true;
+                btn.innerHTML = '<div class="ml-loading-spinner"></div>';
+                
+                try {
+                    const response = await fetch('../api/create-pix', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            amount: state.amount,
+                            customer: state.customer,
+                            items: state.items
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.pix_code) {
+                        state.pixCode = data.pix_code;
+                        state.transactionId = data.transaction_id;
+                        Checkout.saveState(state);
+                        location.href = 'pix.html';
+                    } else {
+                        alert('Erro ao gerar PIX. Tente novamente.');
+                        btn.disabled = false;
+                        btn.textContent = 'Confirmar e Gerar PIX';
+                    }
+                } catch (e) {
+                    console.error(e);
+                    alert('Erro de conexão. Tente novamente.');
+                    btn.disabled = false;
+                    btn.textContent = 'Confirmar e Gerar PIX';
+                }
+            };
+        });
+    </script>
+</body>
+</html>

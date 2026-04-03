@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagar com Pix - Mercado Livre</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+<body>
+    <div class="ml-header">
+        <img src="https://http2.mlstatic.com/frontend-assets/ui-navigation/5.18.9/mercadolibre/logo__large_plus.png" class="ml-header-logo" onclick="location.href='../index.htm'">
+        <a href="#" class="ml-header-contact">Contato</a>
+    </div>
+
+    <div class="ml-guarantee">
+        Esta compra possui garantia. O Mercado Pago garante a entrega do pedido ou <b>Reembolso total do valor pago.</b>
+    </div>
+
+    <div class="ml-container">
+        <div class="ml-main">
+            <div class="ml-card">
+                <div class="ml-pix-container">
+                    <div class="ml-card-title" style="justify-content: center; margin-bottom: 10px;">
+                        Pague com Pix
+                    </div>
+                    <p style="font-size: 14px; color: #666;">Escaneie o QR Code ou copie o código abaixo para pagar.</p>
+                    
+                    <div class="ml-pix-qr" id="ml-pix-qr-container">
+                        <img id="ml-pix-qr-img" src="" alt="QR Code Pix">
+                    </div>
+
+                    <div class="ml-pix-timer" id="ml-pix-timer">Expira em 30:00</div>
+
+                    <div class="ml-pix-code-box" id="ml-pix-code">Carregando código...</div>
+                    
+                    <button id="ml-btn-copy-pix" class="ml-btn-primary">Copiar Código Pix</button>
+                    
+                    <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee; font-size: 13px; color: #666;">
+                        <p><b>Como pagar?</b></p>
+                        <ol style="text-align: left; display: inline-block;">
+                            <li>Abra o app do seu banco.</li>
+                            <li>Escolha a opção Pagar com Pix.</li>
+                            <li>Escaneie o QR Code ou cole o código.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ml-sidebar">
+            <div class="ml-card">
+                <div style="font-size:18px; font-weight:600; margin-bottom:20px;">Resumo da compra</div>
+                <div class="ml-summary-row">
+                    <span>Produtos</span>
+                    <span id="ml-sum-subtotal">R$ 0,00</span>
+                </div>
+                <div class="ml-summary-row">
+                    <span>Frete</span>
+                    <span style="color:#00a650; font-weight:600;">Grátis</span>
+                </div>
+                <div class="ml-summary-row ml-summary-total">
+                    <span>Você pagará</span>
+                    <span id="ml-sum-total">R$ 0,00</span>
+                </div>
+
+                <div class="ml-summary-product">
+                    <img src="" id="ml-sum-product-img" class="ml-summary-img">
+                    <div class="ml-summary-name" id="ml-sum-product-name">Carregando...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ml-footer">
+        <p>MERCADO PAGO | Todos os direitos reservados</p>
+        <p>© 2026 MERCADO PAGO - CNPJ: 10.573.521/0001-91</p>
+    </div>
+
+    <script src="checkout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const state = Checkout.getState();
+            if (!state.pixCode) return location.href = 'pagamento.html';
+
+            const qrImg = document.getElementById('ml-pix-qr-img');
+            const codeBox = document.getElementById('ml-pix-code');
+            const timerEl = document.getElementById('ml-pix-timer');
+            const copyBtn = document.getElementById('ml-btn-copy-pix');
+
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(state.pixCode)}`;
+            codeBox.textContent = state.pixCode;
+
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(state.pixCode);
+                copyBtn.textContent = 'Código Copiado!';
+                copyBtn.style.background = '#00a650';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copiar Código Pix';
+                    copyBtn.style.background = '#3483fa';
+                }, 2000);
+            };
+
+            // Timer
+            let timeLeft = 30 * 60;
+            const timer = setInterval(() => {
+                const min = Math.floor(timeLeft / 60);
+                const sec = timeLeft % 60;
+                timerEl.textContent = `Expira em ${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+                if (timeLeft <= 0) clearInterval(timer);
+                timeLeft--;
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
